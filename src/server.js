@@ -15,15 +15,20 @@ const handleListen = () => console.log(`Listening on http://localhost:3000`);
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
+const backSockets = []; // fake DB
+
 wss.on('connection', (backSocket) => {
-  // console.log('backSocket👉', backSocket);
+  backSockets.push(backSocket);
   console.log('🔗 Connected to Browser 🔗');
   backSocket.on('close', () =>
     console.log('❌ DisConnected to the Browser ❌')
   );
-  backSocket.send('hello👋');
+
   backSocket.on('message', (message) => {
     console.log('🕊️ Message from Browser :', message.toString()); //응답이 Buffer형태로 오기때문에 toString으로 변환해준다.
+    backSockets.forEach((aSocket) => {
+      aSocket.send(message.toString());
+    }); //연결된 모든 socket에 메세지를 보낸다.
   });
 });
 
