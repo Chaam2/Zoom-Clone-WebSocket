@@ -16,7 +16,15 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 wss.on('connection', (backSocket) => {
-  console.log('backSocket👉', backSocket);
+  // console.log('backSocket👉', backSocket);
+  console.log('🔗 Connected to Browser 🔗');
+  backSocket.on('close', () =>
+    console.log('❌ DisConnected to the Browser ❌')
+  );
+  backSocket.send('hello👋');
+  backSocket.on('message', (message) => {
+    console.log('🕊️ Message from Browser :', message.toString()); //응답이 Buffer형태로 오기때문에 toString으로 변환해준다.
+  });
 });
 
 server.listen(3000, handleListen);
